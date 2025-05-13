@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+lambda_0_nm = 532
+lambda_0_cm = lambda_0_nm * 1e-7
+
+files = {
+    r'C:\Users\KOTA KATSUMI\Documents\Raman_Data\Zeyang Gong\5_12_2025\LL.txt': 'LL',
+    r'C:\Users\KOTA KATSUMI\Documents\Raman_Data\Zeyang Gong\5_12_2025\LR.txt': 'LR',
+    r'C:\Users\KOTA KATSUMI\Documents\Raman_Data\Zeyang Gong\5_12_2025\RL.txt': 'RL',
+    r'C:\Users\KOTA KATSUMI\Documents\Raman_Data\Zeyang Gong\5_12_2025\RR.txt': 'RR'
+}
+
+plt.figure(figsize=(15,9))
+
+for filename, label in files.items():
+    df = pd.read_csv(filename, sep='\t', skiprows=2)
+
+    wavelength_nm = df.iloc[:, 0].astype(float).values
+    intensity = df.iloc[:, 1].astype(float).values
+    wavelength_cm = wavelength_nm * 1e-7
+
+    raman_shift = (1 / lambda_0_cm) - (1 / wavelength_cm)
+
+    sorted_idx = np.argsort(raman_shift)
+    raman_shift = raman_shift[sorted_idx]
+    intensity = intensity[sorted_idx]
+
+    plt.plot(raman_shift, intensity, label=label, linewidth=0.8)
+
+plt.xlabel("Raman shift (cm$^{-1}$)")
+plt.ylabel("Intensity (a.u.)")
+plt.title("Raman Spectra under Different Polarizations")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
